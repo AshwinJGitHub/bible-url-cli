@@ -188,6 +188,31 @@ The reading plan parameters are defined in `src/config.ts` and can be customized
 }
 ```
 
+## Legal Disclaimer
+
+This tool is intended for **personal, non-commercial use only**.
+
+### BibleGateway Terms of Use
+
+This tool fetches content from [BibleGateway.com](https://www.biblegateway.com), which is operated by HarperCollins Christian Publishing. By using this tool, you agree to comply with BibleGateway's [Terms of Use](https://www.biblegateway.com/legal/terms/).
+
+Key points from their terms:
+
+- **Personal use only**: Content is licensed for personal, non-commercial use
+- **Quoting limits**: Up to 250 verses may be quoted without written permission
+- **Copyright**: Bible translations are copyrighted; proper attribution is required
+- **No redistribution**: Downloaded content should not be redistributed commercially
+
+### Bible Translation Copyrights
+
+Each Bible translation has its own copyright and usage terms. When using the `--markdown` option, ensure your use complies with the specific translation's copyright (NIV®, ESV®, etc.). See [BibleGateway Versions](https://www.biblegateway.com/versions/) for copyright details.
+
+### Disclaimer
+
+This tool is not affiliated with, endorsed by, or sponsored by BibleGateway or HarperCollins Christian Publishing. The developers of this tool are not responsible for any misuse or violation of BibleGateway's terms of service.
+
+**Use responsibly and respect the copyright holders.**
+
 ## License
 
 MIT
