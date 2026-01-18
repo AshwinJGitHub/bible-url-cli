@@ -1,0 +1,28 @@
+{
+  "name": "bible-url-cli",
+  "version": "1.0.0",
+  "description": "Generate BibleGateway passage URL for a day-based reading plan.",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "bibleurl": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/index.js",
+    "dev": "node --loader ts-node/esm src/index.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.6.3",
+    "vitest": "^1.6.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
