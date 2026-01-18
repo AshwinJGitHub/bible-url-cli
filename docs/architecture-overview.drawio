@@ -1,0 +1,142 @@
+<mxfile host="app.diagrams.net" modified="2026-01-17T00:00:00.000Z" agent="draw.io" version="22.0.0">
+  <diagram name="Architecture Overview" id="arch-overview">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        
+        <!-- Title -->
+        <mxCell id="title" value="Bible URL CLI - Architecture Overview" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="300" y="20" width="500" height="40" as="geometry" />
+        </mxCell>
+        
+        <!-- User/CLI Layer -->
+        <mxCell id="cli-group" value="CLI Layer" style="swimlane;horizontal=1;startSize=30;fillColor=#dae8fc;strokeColor=#6c8ebf;rounded=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="80" width="200" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="user" value="User&#xa;(Terminal)" style="shape=actor;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="cli-group">
+          <mxGeometry x="70" y="50" width="60" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="args" value="CLI Arguments&#xa;day, --version, -m" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="cli-group">
+          <mxGeometry x="20" y="140" width="160" height="30" as="geometry" />
+        </mxCell>
+        
+        <!-- Application Core -->
+        <mxCell id="core-group" value="Application Core (src/)" style="swimlane;horizontal=1;startSize=30;fillColor=#d5e8d4;strokeColor=#82b366;rounded=1;" vertex="1" parent="1">
+          <mxGeometry x="280" y="80" width="520" height="300" as="geometry" />
+        </mxCell>
+        
+        <!-- index.ts -->
+        <mxCell id="index" value="index.ts&#xa;(Entry Point)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1" vertex="1" parent="core-group">
+          <mxGeometry x="20" y="50" width="120" height="60" as="geometry" />
+        </mxCell>
+        
+        <!-- config.ts -->
+        <mxCell id="config" value="config.ts&#xa;(Configuration)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="core-group">
+          <mxGeometry x="20" y="130" width="120" height="60" as="geometry" />
+        </mxCell>
+        
+        <!-- core.ts modules -->
+        <mxCell id="core-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;dashed=1;" vertex="1" parent="core-group">
+          <mxGeometry x="160" y="40" width="340" height="240" as="geometry" />
+        </mxCell>
+        <mxCell id="core-label" value="core.ts (Pure Functions)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontStyle=1" vertex="1" parent="core-group">
+          <mxGeometry x="250" y="45" width="160" height="20" as="geometry" />
+        </mxCell>
+        
+        <!-- Core modules -->
+        <mxCell id="bible-data" value="Bible Data&#xa;OT, GOSPELS, NT_REST" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#b85450;" vertex="1" parent="core-group">
+          <mxGeometry x="180" y="75" width="140" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="chapter-logic" value="Chapter Logic&#xa;pickChapters, formatSegments" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#b85450;" vertex="1" parent="core-group">
+          <mxGeometry x="340" y="75" width="145" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="url-builder" value="URL Builder&#xa;buildBibleGatewayUrl" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#b85450;" vertex="1" parent="core-group">
+          <mxGeometry x="180" y="135" width="140" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="html-parser" value="HTML Parser&#xa;parseHtmlToMarkdown" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#b85450;" vertex="1" parent="core-group">
+          <mxGeometry x="340" y="135" width="145" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="cli-parser" value="CLI Parser&#xa;parseDay, parseVersion" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#b85450;" vertex="1" parent="core-group">
+          <mxGeometry x="180" y="195" width="140" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="reading-gen" value="Reading Generator&#xa;generateDailyReading" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#b85450;" vertex="1" parent="core-group">
+          <mxGeometry x="340" y="195" width="145" height="45" as="geometry" />
+        </mxCell>
+        
+        <!-- External Services -->
+        <mxCell id="external-group" value="External Services" style="swimlane;horizontal=1;startSize=30;fillColor=#ffe6cc;strokeColor=#d79b00;rounded=1;" vertex="1" parent="1">
+          <mxGeometry x="840" y="80" width="200" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="biblegateway" value="BibleGateway.com&#xa;API" style="shape=cloud;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="external-group">
+          <mxGeometry x="30" y="50" width="140" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="http" value="HTTPS + fetch()" style="text;html=1;strokeColor=none;fillColor=none;align=center;" vertex="1" parent="external-group">
+          <mxGeometry x="50" y="140" width="100" height="20" as="geometry" />
+        </mxCell>
+        
+        <!-- Output Layer -->
+        <mxCell id="output-group" value="Output Layer" style="swimlane;horizontal=1;startSize=30;fillColor=#f5f5f5;strokeColor=#666666;rounded=1;" vertex="1" parent="1">
+          <mxGeometry x="280" y="420" width="520" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="terminal-out" value="Terminal&#xa;(OSC 8 Clickable Link)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="output-group">
+          <mxGeometry x="40" y="50" width="140" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="file-out" value="Log/ Folder&#xa;(Markdown Files)" style="shape=document;whiteSpace=wrap;html=1;boundedLbl=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="output-group">
+          <mxGeometry x="340" y="40" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="or-label" value="OR" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontStyle=1;fontSize=14" vertex="1" parent="output-group">
+          <mxGeometry x="230" y="60" width="40" height="20" as="geometry" />
+        </mxCell>
+        
+        <!-- Arrows -->
+        <mxCell id="arrow1" value="" style="endArrow=classic;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="args" target="index">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow2" value="" style="endArrow=classic;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="index" target="core-box">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="420" y="210" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="arrow3" value="" style="endArrow=classic;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="config" target="index">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="360" y="260" as="sourcePoint" />
+            <mxPoint x="360" y="200" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="arrow4" value="fetch" style="endArrow=classic;startArrow=classic;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="800" y="230" as="sourcePoint" />
+            <mxPoint x="840" y="170" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="arrow5" value="" style="endArrow=classic;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="540" y="380" as="sourcePoint" />
+            <mxPoint x="540" y="420" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Legend -->
+        <mxCell id="legend" value="Legend" style="swimlane;horizontal=1;startSize=20;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="840" y="300" width="200" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="leg1" value="Entry/IO" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" vertex="1" parent="legend">
+          <mxGeometry x="10" y="30" width="80" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="leg2" value="Pure Logic" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" vertex="1" parent="legend">
+          <mxGeometry x="105" y="30" width="80" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="leg3" value="Config" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;" vertex="1" parent="legend">
+          <mxGeometry x="10" y="65" width="80" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="leg4" value="External" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;" vertex="1" parent="legend">
+          <mxGeometry x="105" y="65" width="80" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="leg5" value="Output" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="legend">
+          <mxGeometry x="10" y="100" width="80" height="25" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
