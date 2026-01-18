@@ -9,14 +9,29 @@ All diagrams are in [draw.io](https://app.diagrams.net/) format (`.drawio` files
 - Open them at [app.diagrams.net](https://app.diagrams.net/)
 - Open them in the desktop Draw.io application
 
-### Available Diagrams
+### SVG Exports (for GitHub viewing)
 
-| File | Description |
-|------|-------------|
-| `architecture-overview.drawio` | High-level system architecture showing CLI layer, application core, external services, and output layer |
-| `data-flow.drawio` | Data flow through the application for both URL mode and Markdown mode, including key transformations |
-| `technical-choices.drawio` | Technical decisions and rationale: language, architecture, security, testing, HTML parsing, terminal UX |
-| `roadmap.drawio` | Areas of growth, future features, technical debt, and priority matrix |
+SVG versions of diagrams are available in the `svg/` folder for direct viewing on GitHub.
+
+| Diagram | draw.io Source | SVG Preview |
+|---------|----------------|-------------|
+| Architecture Overview | [`architecture-overview.drawio`](./architecture-overview.drawio) | [`svg/architecture-overview.svg`](./svg/architecture-overview.svg) |
+| Data Flow | [`data-flow.drawio`](./data-flow.drawio) | [`svg/data-flow.svg`](./svg/data-flow.svg) |
+| Technical Choices | [`technical-choices.drawio`](./technical-choices.drawio) | [`svg/technical-choices.svg`](./svg/technical-choices.svg) |
+| Roadmap | [`roadmap.drawio`](./roadmap.drawio) | [`svg/roadmap.svg`](./svg/roadmap.svg) |
+
+### Exporting Diagrams
+
+To regenerate SVG files from the draw.io sources:
+
+```bash
+npm run docs:export
+```
+
+**Prerequisites:** Requires the draw.io desktop application:
+- macOS: `brew install --cask drawio`
+- Linux: `snap install drawio`
+- Windows: [Download from GitHub](https://github.com/jgraph/drawio-desktop/releases)
 
 ## Architecture Overview
 
