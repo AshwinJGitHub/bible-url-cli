@@ -92,4 +92,4 @@ npm run docs:export
 - No offline support
 - Poetry formatting incomplete
 
-See `roadmap.drawio` for the current priority matrix.
+See [`roadmap.drawio`](./roadmap.drawio) or [`roadmap.svg`](./svg/roadmap.svg) for the current priority matrix.

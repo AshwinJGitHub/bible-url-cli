@@ -2,6 +2,8 @@
 
 This utility responds to the lack of a good dark mode on the Biblegateway site. It will render the print view in a highly compatible markdown file that can be viewed in your preferred viewer.
 
+*Growth:* The application is growing beyond its initial scope of generating BibleGateway URLs. It now includes capabilities to vary the number of chapters fetched, fetching passage text, and converting it to Markdown for flexible reading and note-taking.
+
 ## Overview
 
 This CLI tool generates a URL to read multiple Bible passages on [BibleGateway.com](https://www.biblegateway.com) based on a day number. The reading plan covers three tracks that cycle independently:
