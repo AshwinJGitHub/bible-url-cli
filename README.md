@@ -80,6 +80,60 @@ Any version code supported by BibleGateway works. Common options:
 
 See [BibleGateway Versions](https://www.biblegateway.com/versions/) for the full list.
 
+## Markdown Output
+
+When using the `--markdown` or `-m` flag, the tool fetches the passage from BibleGateway and converts it to clean Markdown format.
+
+### Output Location
+
+Markdown files are saved to the `Log/` folder with the naming convention:
+
+```
+Log/YYYY-MM-DD-day-N.md
+```
+
+For example: `Log/2026-01-17-day-42.md`
+
+### Markdown Format
+
+The output includes:
+
+- **Headings**: Book and chapter titles as `# Heading`
+- **Section headings**: Passage section titles as `### Subheading`
+- **Verse numbers**: Displayed as superscript (e.g., `<sup>1</sup>`)
+- **Chapter numbers**: Bold format for chapter starts
+- **Footnotes**: Linked footnotes at the end of each passage section
+- **Clean text**: HTML entities decoded, cross-references removed
+
+### Example Output
+
+```markdown
+# Genesis 1 (NIV)
+
+### The Beginning
+
+**1** <sup>1</sup>In the beginning God created the heavens and the earth. <sup>2</sup>Now the earth was formless and empty...
+
+### Footnotes
+
+<sup><a id="fen-NIV-1a">a</a></sup> Genesis 1:1 Or *creation*
+
+---
+
+# Matthew 1 (NIV)
+
+### The Genealogy of Jesus the Messiah
+
+**1** <sup>1</sup>This is the genealogy<sup><a href="#fen-NIV-23130a">a</a></sup> of Jesus the Messiah...
+```
+
+### Use Cases
+
+- **Dark mode reading**: View passages in your preferred Markdown editor with dark theme
+- **Offline access**: Save daily readings for offline reference
+- **Note-taking**: Import into Obsidian, Notion, or other note-taking apps
+- **Archiving**: Build a personal library of your daily readings
+
 ## How It Works
 
 For a given day `N`:
