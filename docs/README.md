@@ -22,19 +22,19 @@ All diagrams are in [draw.io](https://app.diagrams.net/) format (`.drawio` files
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                        CLI Layer                             │
+│                        CLI Layer                            │
 │  User → bibleurl <day> [--version X] [--markdown]           │
 └─────────────────────────┬───────────────────────────────────┘
                           │
 ┌─────────────────────────▼───────────────────────────────────┐
-│                    Application Core                          │
+│                    Application Core                         │
 │  ┌─────────────┐  ┌─────────────────────────────────────┐   │
-│  │  index.ts   │  │            core.ts                   │   │
+│  │  index.ts   │  │            core.ts                  │   │
 │  │  (Entry)    │──│  • Bible data (OT, Gospels, NT)     │   │
-│  └─────────────┘  │  • Chapter picking & formatting      │   │
-│  ┌─────────────┐  │  • URL building                      │   │
-│  │  config.ts  │  │  • HTML → Markdown parsing           │   │
-│  │  (Settings) │  │  • CLI argument parsing              │   │
+│  └─────────────┘  │  • Chapter picking & formatting     │   │
+│  ┌─────────────┐  │  • URL building                     │   │
+│  │  config.ts  │  │  • HTML → Markdown parsing          │   │
+│  │  (Settings) │  │  • CLI argument parsing             │   │
 │  └─────────────┘  └─────────────────────────────────────┘   │
 └─────────────────────────┬───────────────────────────────────┘
                           │
@@ -47,7 +47,8 @@ All diagrams are in [draw.io](https://app.diagrams.net/) format (`.drawio` files
                                          │
                               ┌──────────▼──────────┐
                               │   Log/ Folder       │
-                              │   (Markdown Files)  │
+                              │   (Markdown Files,  │
+                              │     gitignored)     │
                               └─────────────────────┘
 ```
 
@@ -76,4 +77,4 @@ All diagrams are in [draw.io](https://app.diagrams.net/) format (`.drawio` files
 - No offline support
 - Poetry formatting incomplete
 
-See `roadmap.drawio` for the full priority matrix.
+See `roadmap.drawio` for the current priority matrix.

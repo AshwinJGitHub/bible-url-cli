@@ -1,196 +1,175 @@
-<mxfile host="app.diagrams.net" modified="2026-01-17T00:00:00.000Z" agent="draw.io" version="22.0.0">
-  <diagram name="Technical Decisions" id="tech-decisions">
-    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" math="0" shadow="0">
-      <root>
-        <mxCell id="0" />
-        <mxCell id="1" parent="0" />
-        
-        <!-- Title -->
-        <mxCell id="title" value="Bible URL CLI - Technical Choices &amp; Rationale" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;fontStyle=1" vertex="1" parent="1">
-          <mxGeometry x="250" y="20" width="600" height="40" as="geometry" />
-        </mxCell>
-        
-        <!-- Language & Runtime -->
-        <mxCell id="lang-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
-          <mxGeometry x="40" y="80" width="320" height="180" as="geometry" />
-        </mxCell>
-        <mxCell id="lang-title" value="Language &amp; Runtime" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontStyle=1;fontSize=14" vertex="1" parent="1">
-          <mxGeometry x="50" y="90" width="200" height="20" as="geometry" />
-        </mxCell>
-        <mxCell id="lang-choice" value="✓ TypeScript 5.6" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=12;fontStyle=1;fontColor=#0066CC" vertex="1" parent="1">
-          <mxGeometry x="50" y="115" width="150" height="20" as="geometry" />
-        </mxCell>
-        <mxCell id="lang-why" value="• Type safety catches bugs at compile time&#xa;• Excellent IDE support (autocompletion)&#xa;• Strict mode + noUncheckedIndexedAccess" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11" vertex="1" parent="1">
-          <mxGeometry x="50" y="135" width="300" height="50" as="geometry" />
-        </mxCell>
-        <mxCell id="runtime-choice" value="✓ Node.js ≥18 (native fetch)" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=12;fontStyle=1;fontColor=#0066CC" vertex="1" parent="1">
-          <mxGeometry x="50" y="185" width="200" height="20" as="geometry" />
-        </mxCell>
-        <mxCell id="runtime-why" value="• No external HTTP dependencies&#xa;• AbortController for timeouts&#xa;• ES2022 modules" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11" vertex="1" parent="1">
-          <mxGeometry x="50" y="205" width="280" height="45" as="geometry" />
-        </mxCell>
-        
-        <!-- Architecture Pattern -->
-        <mxCell id="arch-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
-          <mxGeometry x="380" y="80" width="320" height="180" as="geometry" />
-        </mxCell>
-        <mxCell id="arch-title" value="Architecture Pattern" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontStyle=1;fontSize=14" vertex="1" parent="1">
-          <mxGeometry x="390" y="90" width="200" height="20" as="geometry" />
-        </mxCell>
-        <mxCell id="arch-choice" value="✓ Functional Core / Imperative Shell" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=12;fontStyle=1;fontColor=#009900" vertex="1" parent="1">
-          <mxGeometry x="390" y="115" width="250" height="20" as="geometry" />
-        </mxCell>
-        <mxCell id="arch-why" value="• core.ts: Pure functions (testable)&#xa;• index.ts: IO &amp; side effects (entry)&#xa;• config.ts: Externalized parameters" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11" vertex="1" parent="1">
-          <mxGeometry x="390" y="135" width="280" height="50" as="geometry" />
-        </mxCell>
-        <mxCell id="arch-benefit" value="Benefits:" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11;fontStyle=1" vertex="1" parent="1">
-          <mxGeometry x="390" y="185" width="60" height="20" as="geometry" />
-        </mxCell>
-        <mxCell id="arch-benefits" value="• 78 unit tests cover core logic&#xa;• Easy to mock external dependencies&#xa;• Clear separation of concerns" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11" vertex="1" parent="1">
-          <mxGeometry x="390" y="200" width="280" height="50" as="geometry" />
-        </mxCell>
-        
-        <!-- Security Measures -->
-        <mxCell id="sec-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
-          <mxGeometry x="720" y="80" width="320" height="180" as="geometry" />
-        </mxCell>
-        <mxCell id="sec-title" value="Security Measures" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontStyle=1;fontSize=14" vertex="1" parent="1">
-          <mxGeometry x="730" y="90" width="200" height="20" as="geometry" />
-        </mxCell>
-        <mxCell id="sec1" value="✓ Request Timeout (30s)" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11;fontColor=#CC0000" vertex="1" parent="1">
-          <mxGeometry x="730" y="115" width="200" height="15" as="geometry" />
-        </mxCell>
-        <mxCell id="sec1-why" value="   Prevents hanging on slow/unresponsive servers" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=10;fontStyle=2" vertex="1" parent="1">
-          <mxGeometry x="730" y="130" width="280" height="15" as="geometry" />
-        </mxCell>
-        <mxCell id="sec2" value="✓ Response Size Limit (5MB)" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11;fontColor=#CC0000" vertex="1" parent="1">
-          <mxGeometry x="730" y="150" width="200" height="15" as="geometry" />
-        </mxCell>
-        <mxCell id="sec2-why" value="   Prevents memory exhaustion attacks" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=10;fontStyle=2" vertex="1" parent="1">
-          <mxGeometry x="730" y="165" width="280" height="15" as="geometry" />
-        </mxCell>
-        <mxCell id="sec3" value="✓ Input Validation" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11;fontColor=#CC0000" vertex="1" parent="1">
-          <mxGeometry x="730" y="185" width="200" height="15" as="geometry" />
-        </mxCell>
-        <mxCell id="sec3-why" value="   Day must be positive integer, version alphanumeric" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=10;fontStyle=2" vertex="1" parent="1">
-          <mxGeometry x="730" y="200" width="280" height="15" as="geometry" />
-        </mxCell>
-        <mxCell id="sec4" value="✓ URL Encoding" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11;fontColor=#CC0000" vertex="1" parent="1">
-          <mxGeometry x="730" y="220" width="200" height="15" as="geometry" />
-        </mxCell>
-        <mxCell id="sec4-why" value="   encodeURIComponent prevents injection" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=10;fontStyle=2" vertex="1" parent="1">
-          <mxGeometry x="730" y="235" width="280" height="15" as="geometry" />
-        </mxCell>
-        
-        <!-- Testing Strategy -->
-        <mxCell id="test-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
-          <mxGeometry x="40" y="280" width="320" height="160" as="geometry" />
-        </mxCell>
-        <mxCell id="test-title" value="Testing Strategy" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontStyle=1;fontSize=14" vertex="1" parent="1">
-          <mxGeometry x="50" y="290" width="200" height="20" as="geometry" />
-        </mxCell>
-        <mxCell id="test-choice" value="✓ Vitest" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=12;fontStyle=1;fontColor=#CC9900" vertex="1" parent="1">
-          <mxGeometry x="50" y="315" width="100" height="20" as="geometry" />
-        </mxCell>
-        <mxCell id="test-why" value="• Fast execution (~180ms for 78 tests)&#xa;• Native ESM support&#xa;• Compatible with existing Jest patterns" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11" vertex="1" parent="1">
-          <mxGeometry x="50" y="335" width="280" height="45" as="geometry" />
-        </mxCell>
-        <mxCell id="test-coverage" value="Coverage: Bible data, chapter logic, URL building,&#xa;HTML parsing, CLI parsing, integration tests" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11" vertex="1" parent="1">
-          <mxGeometry x="50" y="390" width="300" height="35" as="geometry" />
-        </mxCell>
-        
-        <!-- HTML Parsing -->
-        <mxCell id="html-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
-          <mxGeometry x="380" y="280" width="320" height="160" as="geometry" />
-        </mxCell>
-        <mxCell id="html-title" value="HTML Parsing Approach" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontStyle=1;fontSize=14" vertex="1" parent="1">
-          <mxGeometry x="390" y="290" width="200" height="20" as="geometry" />
-        </mxCell>
-        <mxCell id="html-choice" value="✓ Regex-based (no DOM library)" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=12;fontStyle=1;fontColor=#9900CC" vertex="1" parent="1">
-          <mxGeometry x="390" y="315" width="250" height="20" as="geometry" />
-        </mxCell>
-        <mxCell id="html-why" value="• Zero runtime dependencies&#xa;• BibleGateway HTML is predictable&#xa;• Simpler deployment (no cheerio/jsdom)" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11" vertex="1" parent="1">
-          <mxGeometry x="390" y="335" width="280" height="50" as="geometry" />
-        </mxCell>
-        <mxCell id="html-tradeoff" value="Trade-off: More brittle if BG changes HTML&#xa;Mitigation: Tests verify parsing works" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11;fontStyle=2" vertex="1" parent="1">
-          <mxGeometry x="390" y="395" width="280" height="35" as="geometry" />
-        </mxCell>
-        
-        <!-- Terminal Output -->
-        <mxCell id="term-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
-          <mxGeometry x="720" y="280" width="320" height="160" as="geometry" />
-        </mxCell>
-        <mxCell id="term-title" value="Terminal UX" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontStyle=1;fontSize=14" vertex="1" parent="1">
-          <mxGeometry x="730" y="290" width="200" height="20" as="geometry" />
-        </mxCell>
-        <mxCell id="term-choice" value="✓ OSC 8 Hyperlinks" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=12;fontStyle=1;fontColor=#CC6600" vertex="1" parent="1">
-          <mxGeometry x="730" y="315" width="200" height="20" as="geometry" />
-        </mxCell>
-        <mxCell id="term-why" value="• Click to open in browser (iTerm2, etc.)&#xa;• Fallback: URL still visible as plain text&#xa;• No external dependencies" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11" vertex="1" parent="1">
-          <mxGeometry x="730" y="335" width="280" height="50" as="geometry" />
-        </mxCell>
-        <mxCell id="term-format" value="Format: \\e]8;;URL\\e\\TEXT\\e]8;;\\e\\" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=10;fontFamily=Courier New" vertex="1" parent="1">
-          <mxGeometry x="730" y="395" width="280" height="20" as="geometry" />
-        </mxCell>
-        <mxCell id="term-support" value="Supported: iTerm2, Windows Terminal, Konsole, etc." style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=10;fontStyle=2" vertex="1" parent="1">
-          <mxGeometry x="730" y="415" width="280" height="15" as="geometry" />
-        </mxCell>
-        
-        <!-- Config Design -->
-        <mxCell id="config-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
-          <mxGeometry x="40" y="460" width="320" height="140" as="geometry" />
-        </mxCell>
-        <mxCell id="config-title" value="Configuration Design" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontStyle=1;fontSize=14" vertex="1" parent="1">
-          <mxGeometry x="50" y="470" width="200" height="20" as="geometry" />
-        </mxCell>
-        <mxCell id="config-choice" value="✓ Typed Config Object" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=12;fontStyle=1;fontColor=#666666" vertex="1" parent="1">
-          <mxGeometry x="50" y="495" width="200" height="20" as="geometry" />
-        </mxCell>
-        <mxCell id="config-why" value="• ReadingPlanConfig type with defaults&#xa;• No magic numbers in business logic&#xa;• Easy to extend (API config support planned)&#xa;• mergeConfig() for partial overrides" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11" vertex="1" parent="1">
-          <mxGeometry x="50" y="515" width="280" height="70" as="geometry" />
-        </mxCell>
-        
-        <!-- File Output -->
-        <mxCell id="file-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
-          <mxGeometry x="380" y="460" width="320" height="140" as="geometry" />
-        </mxCell>
-        <mxCell id="file-title" value="File Output Design" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontStyle=1;fontSize=14" vertex="1" parent="1">
-          <mxGeometry x="390" y="470" width="200" height="20" as="geometry" />
-        </mxCell>
-        <mxCell id="file-choice" value="✓ Log/ folder with dated filenames" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=12;fontStyle=1;fontColor=#009900" vertex="1" parent="1">
-          <mxGeometry x="390" y="495" width="250" height="20" as="geometry" />
-        </mxCell>
-        <mxCell id="file-why" value="• YYYY-MM-DD-day-N.md naming&#xa;• Auto-creates folder if missing&#xa;• Gitignored by default&#xa;• Compatible with Obsidian/note apps" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11" vertex="1" parent="1">
-          <mxGeometry x="390" y="515" width="280" height="70" as="geometry" />
-        </mxCell>
-        
-        <!-- Rejected Alternatives -->
-        <mxCell id="reject-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;dashed=1;" vertex="1" parent="1">
-          <mxGeometry x="720" y="460" width="320" height="140" as="geometry" />
-        </mxCell>
-        <mxCell id="reject-title" value="Rejected Alternatives" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontStyle=1;fontSize=14" vertex="1" parent="1">
-          <mxGeometry x="730" y="470" width="200" height="20" as="geometry" />
-        </mxCell>
-        <mxCell id="reject1" value="✗ cheerio/jsdom for HTML parsing" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11;fontColor=#CC0000" vertex="1" parent="1">
-          <mxGeometry x="730" y="495" width="250" height="15" as="geometry" />
-        </mxCell>
-        <mxCell id="reject1-why" value="   → Adds 1MB+ to bundle, overkill for known HTML" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=10;fontStyle=2" vertex="1" parent="1">
-          <mxGeometry x="730" y="510" width="280" height="15" as="geometry" />
-        </mxCell>
-        <mxCell id="reject2" value="✗ axios/got for HTTP" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11;fontColor=#CC0000" vertex="1" parent="1">
-          <mxGeometry x="730" y="530" width="200" height="15" as="geometry" />
-        </mxCell>
-        <mxCell id="reject2-why" value="   → Native fetch sufficient for simple GET" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=10;fontStyle=2" vertex="1" parent="1">
-          <mxGeometry x="730" y="545" width="280" height="15" as="geometry" />
-        </mxCell>
-        <mxCell id="reject3" value="✗ commander/yargs for CLI" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11;fontColor=#CC0000" vertex="1" parent="1">
-          <mxGeometry x="730" y="565" width="200" height="15" as="geometry" />
-        </mxCell>
-        <mxCell id="reject3-why" value="   → Manual parsing simpler for 3 flags" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=10;fontStyle=2" vertex="1" parent="1">
-          <mxGeometry x="730" y="580" width="280" height="15" as="geometry" />
-        </mxCell>
-        
-      </root>
-    </mxGraphModel>
-  </diagram>
+<mxfile host="65bd71144e">
+    <diagram name="Technical Decisions" id="tech-decisions">
+        <mxGraphModel dx="1667" dy="869" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="title" value="Bible URL CLI - Technical Choices &amp; Rationale" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;fontStyle=1" parent="1" vertex="1">
+                    <mxGeometry x="250" y="20" width="600" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="lang-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="80" width="320" height="180" as="geometry"/>
+                </mxCell>
+                <mxCell id="lang-title" value="Language &amp; Runtime" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontStyle=1;fontSize=14" parent="1" vertex="1">
+                    <mxGeometry x="50" y="90" width="200" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="lang-choice" value="✓ TypeScript 5.6" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=12;fontStyle=1;fontColor=#0066CC" parent="1" vertex="1">
+                    <mxGeometry x="50" y="115" width="150" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="lang-why" value="• Type safety catches bugs at compile time&#xa;• Excellent IDE support (autocompletion)&#xa;• Strict mode + noUncheckedIndexedAccess" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11" parent="1" vertex="1">
+                    <mxGeometry x="50" y="135" width="300" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="runtime-choice" value="✓ Node.js ≥18 (native fetch)" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=12;fontStyle=1;fontColor=#0066CC" parent="1" vertex="1">
+                    <mxGeometry x="50" y="185" width="200" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="runtime-why" value="• No external HTTP dependencies&#xa;• AbortController for timeouts&#xa;• ES2022 modules" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11" parent="1" vertex="1">
+                    <mxGeometry x="50" y="205" width="280" height="45" as="geometry"/>
+                </mxCell>
+                <mxCell id="arch-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
+                    <mxGeometry x="380" y="80" width="320" height="180" as="geometry"/>
+                </mxCell>
+                <mxCell id="arch-title" value="Architecture Pattern" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontStyle=1;fontSize=14" parent="1" vertex="1">
+                    <mxGeometry x="390" y="90" width="200" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="arch-choice" value="✓ Functional Core / Imperative Shell" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=12;fontStyle=1;fontColor=#009900" parent="1" vertex="1">
+                    <mxGeometry x="390" y="115" width="250" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="arch-why" value="• core.ts: Pure functions (testable)&#xa;• index.ts: IO &amp; side effects (entry)&#xa;• config.ts: Externalized parameters" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11" parent="1" vertex="1">
+                    <mxGeometry x="390" y="135" width="280" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="arch-benefit" value="Benefits:" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11;fontStyle=1" parent="1" vertex="1">
+                    <mxGeometry x="390" y="185" width="60" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="arch-benefits" value="• 78 unit tests cover core logic&#xa;• Easy to mock external dependencies&#xa;• Clear separation of concerns" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11" parent="1" vertex="1">
+                    <mxGeometry x="390" y="200" width="280" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="sec-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" parent="1" vertex="1">
+                    <mxGeometry x="720" y="80" width="320" height="180" as="geometry"/>
+                </mxCell>
+                <mxCell id="sec-title" value="Security Measures" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontStyle=1;fontSize=14" parent="1" vertex="1">
+                    <mxGeometry x="730" y="90" width="200" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="sec1" value="✓ Request Timeout (30s)" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11;fontColor=#CC0000" parent="1" vertex="1">
+                    <mxGeometry x="730" y="115" width="200" height="15" as="geometry"/>
+                </mxCell>
+                <mxCell id="sec1-why" value="   Prevents hanging on slow/unresponsive servers" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=10;fontStyle=2" parent="1" vertex="1">
+                    <mxGeometry x="730" y="130" width="280" height="15" as="geometry"/>
+                </mxCell>
+                <mxCell id="sec2" value="✓ Response Size Limit (5MB)" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11;fontColor=#CC0000" parent="1" vertex="1">
+                    <mxGeometry x="730" y="150" width="200" height="15" as="geometry"/>
+                </mxCell>
+                <mxCell id="sec2-why" value="   Prevents memory exhaustion attacks" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=10;fontStyle=2" parent="1" vertex="1">
+                    <mxGeometry x="730" y="165" width="280" height="15" as="geometry"/>
+                </mxCell>
+                <mxCell id="sec3" value="✓ Input Validation" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11;fontColor=#CC0000" parent="1" vertex="1">
+                    <mxGeometry x="730" y="185" width="200" height="15" as="geometry"/>
+                </mxCell>
+                <mxCell id="sec3-why" value="   Day must be positive integer, version alphanumeric" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=10;fontStyle=2" parent="1" vertex="1">
+                    <mxGeometry x="730" y="200" width="280" height="15" as="geometry"/>
+                </mxCell>
+                <mxCell id="sec4" value="✓ URL Encoding" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11;fontColor=#CC0000" parent="1" vertex="1">
+                    <mxGeometry x="730" y="220" width="200" height="15" as="geometry"/>
+                </mxCell>
+                <mxCell id="sec4-why" value="   encodeURIComponent prevents injection" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=10;fontStyle=2" parent="1" vertex="1">
+                    <mxGeometry x="730" y="235" width="280" height="15" as="geometry"/>
+                </mxCell>
+                <mxCell id="test-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="280" width="320" height="150" as="geometry"/>
+                </mxCell>
+                <mxCell id="test-title" value="Testing Strategy" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontStyle=1;fontSize=14" parent="1" vertex="1">
+                    <mxGeometry x="50" y="290" width="200" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="test-choice" value="✓ Vitest" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=12;fontStyle=1;fontColor=#CC9900" parent="1" vertex="1">
+                    <mxGeometry x="50" y="315" width="100" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="test-why" value="• Fast execution (~180ms for 78 tests)&#xa;• Native ESM support&#xa;• Compatible with existing Jest patterns" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11" parent="1" vertex="1">
+                    <mxGeometry x="50" y="335" width="280" height="45" as="geometry"/>
+                </mxCell>
+                <mxCell id="test-coverage" value="Coverage: Bible data, chapter logic, URL building,&#xa;HTML parsing, CLI parsing, integration tests" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11" parent="1" vertex="1">
+                    <mxGeometry x="50" y="390" width="300" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="html-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" parent="1" vertex="1">
+                    <mxGeometry x="380" y="280" width="320" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="html-title" value="HTML Parsing Approach" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontStyle=1;fontSize=14" parent="1" vertex="1">
+                    <mxGeometry x="390" y="290" width="200" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="html-choice" value="✓ Regex-based (no DOM library)" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=12;fontStyle=1;fontColor=#9900CC" parent="1" vertex="1">
+                    <mxGeometry x="390" y="315" width="250" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="html-why" value="• Zero runtime dependencies&#xa;• BibleGateway HTML is predictable&#xa;• Simpler deployment (no cheerio/jsdom)" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11" parent="1" vertex="1">
+                    <mxGeometry x="390" y="335" width="280" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="html-tradeoff" value="Trade-off: More brittle if BG changes HTML&#xa;Mitigation: Tests verify parsing works" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11;fontStyle=2" parent="1" vertex="1">
+                    <mxGeometry x="390" y="395" width="280" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="term-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" parent="1" vertex="1">
+                    <mxGeometry x="720" y="280" width="320" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="term-title" value="Terminal UX" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontStyle=1;fontSize=14" parent="1" vertex="1">
+                    <mxGeometry x="730" y="290" width="200" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="term-choice" value="✓ OSC 8 Hyperlinks" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=12;fontStyle=1;fontColor=#CC6600" parent="1" vertex="1">
+                    <mxGeometry x="730" y="315" width="200" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="term-why" value="• Click to open in browser (iTerm2, etc.)&#xa;• Fallback: URL still visible as plain text&#xa;• No external dependencies" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11" parent="1" vertex="1">
+                    <mxGeometry x="730" y="335" width="280" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="term-format" value="Format: \\e]8;;URL\\e\\TEXT\\e]8;;\\e\\" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=10;fontFamily=Courier New" parent="1" vertex="1">
+                    <mxGeometry x="730" y="395" width="280" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="term-support" value="Supported: iTerm2, Windows Terminal, Konsole, etc." style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=10;fontStyle=2" parent="1" vertex="1">
+                    <mxGeometry x="730" y="415" width="280" height="15" as="geometry"/>
+                </mxCell>
+                <mxCell id="config-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="460" width="320" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="config-title" value="Configuration Design" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontStyle=1;fontSize=14" parent="1" vertex="1">
+                    <mxGeometry x="50" y="470" width="200" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="config-choice" value="✓ Typed Config Object" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=12;fontStyle=1;fontColor=#666666" parent="1" vertex="1">
+                    <mxGeometry x="50" y="495" width="200" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="config-why" value="• ReadingPlanConfig type with defaults&#xa;• No magic numbers in business logic&#xa;• Easy to extend (API config support planned)&#xa;• mergeConfig() for partial overrides" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11" parent="1" vertex="1">
+                    <mxGeometry x="50" y="515" width="280" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="file-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
+                    <mxGeometry x="380" y="460" width="320" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="file-title" value="File Output Design" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontStyle=1;fontSize=14" parent="1" vertex="1">
+                    <mxGeometry x="390" y="470" width="200" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="file-choice" value="✓ Log/ folder with dated filenames" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=12;fontStyle=1;fontColor=#009900" parent="1" vertex="1">
+                    <mxGeometry x="390" y="495" width="250" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="file-why" value="• YYYY-MM-DD-day-N.md naming&#xa;• Auto-creates folder if missing&#xa;• Gitignored by default&#xa;• Compatible with Obsidian/note apps" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11" parent="1" vertex="1">
+                    <mxGeometry x="390" y="515" width="280" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="reject-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;dashed=1;" parent="1" vertex="1">
+                    <mxGeometry x="720" y="460" width="320" height="150" as="geometry"/>
+                </mxCell>
+                <mxCell id="reject-title" value="Rejected Alternatives" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontStyle=1;fontSize=14" parent="1" vertex="1">
+                    <mxGeometry x="730" y="470" width="200" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="reject1" value="✗ cheerio/jsdom for HTML parsing" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11;fontColor=#CC0000" parent="1" vertex="1">
+                    <mxGeometry x="730" y="495" width="250" height="15" as="geometry"/>
+                </mxCell>
+                <mxCell id="reject1-why" value="   → Adds 1MB+ to bundle, overkill for known HTML" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=10;fontStyle=2" parent="1" vertex="1">
+                    <mxGeometry x="730" y="510" width="280" height="15" as="geometry"/>
+                </mxCell>
+                <mxCell id="reject2" value="✗ axios/got for HTTP" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11;fontColor=#CC0000" parent="1" vertex="1">
+                    <mxGeometry x="730" y="530" width="200" height="15" as="geometry"/>
+                </mxCell>
+                <mxCell id="reject2-why" value="   → Native fetch sufficient for simple GET" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=10;fontStyle=2" parent="1" vertex="1">
+                    <mxGeometry x="730" y="545" width="280" height="15" as="geometry"/>
+                </mxCell>
+                <mxCell id="reject3" value="✗ commander/yargs for CLI" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11;fontColor=#CC0000" parent="1" vertex="1">
+                    <mxGeometry x="730" y="565" width="200" height="15" as="geometry"/>
+                </mxCell>
+                <mxCell id="reject3-why" value="   → Manual parsing simpler for 3 flags" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=10;fontStyle=2" parent="1" vertex="1">
+                    <mxGeometry x="730" y="580" width="280" height="15" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
 </mxfile>
