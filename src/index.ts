@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-/* eslint-disable no-console */
 
 import * as fs from "node:fs";
 import * as path from "node:path";
@@ -9,13 +8,18 @@ import {
   parseVersion,
   generateDailyReading,
   parseHtmlToMarkdown,
+  PARSE_FALLBACK_MESSAGE,
   ValidationError,
 } from "./core.js";
 import { validateLogFolder } from "./path-validation.js";
 import { sanitizeForTerminal } from "./sanitize.js";
+import { validateUrl } from "./url-validation.js";
 
 export class CliError extends Error {
-  constructor(message: string, public readonly exitCode: number = 1) {
+  constructor(
+    message: string,
+    public readonly exitCode: number = 1,
+  ) {
     super(message);
     this.name = "CliError";
   }
@@ -76,10 +80,54 @@ const defaultDeps: Dependencies = {
 
 export const KNOWN_FLAGS = ["--version", "--markdown", "-m", "--help", "-h"];
 
-export async function fetchPassageAsMarkdown(
-  url: string,
-  fetchFn: typeof globalThis.fetch
-): Promise<string> {
+/**
+ * Read a Response body as text while enforcing a byte-size limit (S6).
+ * Aborts mid-stream if the accumulated size exceeds `maxBytes`,
+ * preventing memory exhaustion from unexpectedly large responses.
+ */
+export async function readResponseWithLimit(response: Response, maxBytes: number): Promise<string> {
+  // If the body is not streamable (e.g., in some test mocks), fall back
+  if (!response.body) {
+    const text = await response.text();
+    if (text.length > maxBytes) {
+      throw new CliError(`Response too large: ${text.length} bytes (max: ${maxBytes})`);
+    }
+    return text;
+  }
+
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  const chunks: string[] = [];
+  let totalBytes = 0;
+
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      totalBytes += value.byteLength;
+      if (totalBytes > maxBytes) {
+        void reader.cancel();
+        throw new CliError(`Response too large: exceeded ${maxBytes} bytes during download (max: ${maxBytes})`);
+      }
+
+      chunks.push(decoder.decode(value, { stream: true }));
+    }
+    // Flush any remaining bytes in the decoder
+    chunks.push(decoder.decode());
+  } catch (err) {
+    if (err instanceof CliError) throw err;
+    void reader.cancel();
+    throw err;
+  }
+
+  return chunks.join("");
+}
+
+export async function fetchPassageAsMarkdown(url: string, fetchFn: typeof globalThis.fetch): Promise<string> {
+  // Validate URL origin before fetching (S2 — SSRF prevention)
+  validateUrl(url);
+
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
 
@@ -89,16 +137,14 @@ export async function fetchPassageAsMarkdown(
       throw new CliError(`Failed to fetch passage: ${response.status} ${response.statusText}`);
     }
 
-    // Check content-length if available
+    // Check content-length header if available (early reject)
     const contentLength = response.headers.get("content-length");
     if (contentLength && parseInt(contentLength, 10) > MAX_RESPONSE_SIZE) {
       throw new CliError(`Response too large: ${contentLength} bytes (max: ${MAX_RESPONSE_SIZE})`);
     }
 
-    const html = await response.text();
-    if (html.length > MAX_RESPONSE_SIZE) {
-      throw new CliError(`Response too large: ${html.length} bytes (max: ${MAX_RESPONSE_SIZE})`);
-    }
+    // Stream the body and enforce size limit during download (S6)
+    const html = await readResponseWithLimit(response, MAX_RESPONSE_SIZE);
 
     return parseHtmlToMarkdown(html);
   } catch (err) {
@@ -137,6 +183,13 @@ export async function main(
 
   if (outputMarkdown) {
     const markdown = await fetchPassageAsMarkdown(reading.url, deps.fetch);
+
+    // Q5: Warn the user if parsing failed to extract meaningful content
+    if (markdown === PARSE_FALLBACK_MESSAGE) {
+      deps.stderr(
+        "Warning: Could not extract passage text from the fetched page. The page structure may have changed.",
+      );
+    }
 
     const logDir = validateLogFolder(config.logFolder);
 

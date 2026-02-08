@@ -36,11 +36,7 @@ export function flatIndexToRef(corpus: readonly Book[], flatIndexZeroBased: numb
 /**
  * Pick a sequence of chapters from a corpus, wrapping around if necessary.
  */
-export function pickChapters(
-  corpus: readonly Book[],
-  startFlatIndexZeroBased: number,
-  count: number
-): ChapterRef[] {
+export function pickChapters(corpus: readonly Book[], startFlatIndexZeroBased: number, count: number): ChapterRef[] {
   if (count <= 0) return [];
   const total = totalChapters(corpus);
   if (total <= 0) throw new Error("Internal error: corpus has no chapters.");

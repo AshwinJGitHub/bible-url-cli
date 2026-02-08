@@ -17,7 +17,7 @@ export function validateLogFolder(folder: string, baseDir: string = process.cwd(
 
   if (!resolved.startsWith(normalizedBase + path.sep) && resolved !== normalizedBase) {
     throw new Error(
-      `Log folder "${folder}" resolves to "${resolved}" which is outside the allowed base directory "${normalizedBase}".`
+      `Log folder "${folder}" resolves to "${resolved}" which is outside the allowed base directory "${normalizedBase}".`,
     );
   }
 

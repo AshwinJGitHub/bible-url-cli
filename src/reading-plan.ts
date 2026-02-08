@@ -21,11 +21,7 @@ export interface DailyReading {
 /**
  * Generate the daily reading for a given day.
  */
-export function generateDailyReading(
-  day: number,
-  version: string,
-  config: ReadingPlanConfig
-): DailyReading {
+export function generateDailyReading(day: number, version: string, config: ReadingPlanConfig): DailyReading {
   const otStart = (day - 1) * config.otChaptersPerDay;
   const gospelStart = (day - 1) * config.gospelChaptersPerDay;
   const ntStart = (day - 1) * config.ntChaptersPerDay;
@@ -34,11 +30,7 @@ export function generateDailyReading(
   const gospelRefs = pickChapters(GOSPELS, gospelStart, config.gospelChaptersPerDay);
   const ntRefs = pickChapters(NT_REST, ntStart, config.ntChaptersPerDay);
 
-  const segments = [
-    ...formatSegments(otRefs),
-    ...formatSegments(gospelRefs),
-    ...formatSegments(ntRefs)
-  ];
+  const segments = [...formatSegments(otRefs), ...formatSegments(gospelRefs), ...formatSegments(ntRefs)];
 
   const search = segments.join(", ");
   const url = buildBibleGatewayUrl(search, version, config);
@@ -51,6 +43,6 @@ export function generateDailyReading(
     ntRefs,
     segments,
     search,
-    url
+    url,
   };
 }

@@ -21,23 +21,19 @@ describe("validateLogFolder", () => {
   });
 
   it("should reject path with .. that escapes base", () => {
-    expect(() => validateLogFolder("../../../etc/cron.d", baseDir))
-      .toThrow("outside the allowed base directory");
+    expect(() => validateLogFolder("../../../etc/cron.d", baseDir)).toThrow("outside the allowed base directory");
   });
 
   it("should reject path with .. at start", () => {
-    expect(() => validateLogFolder("../sibling", baseDir))
-      .toThrow("outside the allowed base directory");
+    expect(() => validateLogFolder("../sibling", baseDir)).toThrow("outside the allowed base directory");
   });
 
   it("should reject absolute path outside base", () => {
-    expect(() => validateLogFolder("/etc/cron.d", baseDir))
-      .toThrow("outside the allowed base directory");
+    expect(() => validateLogFolder("/etc/cron.d", baseDir)).toThrow("outside the allowed base directory");
   });
 
   it("should reject absolute path to root", () => {
-    expect(() => validateLogFolder("/", baseDir))
-      .toThrow("outside the allowed base directory");
+    expect(() => validateLogFolder("/", baseDir)).toThrow("outside the allowed base directory");
   });
 
   it("should accept absolute path within base", () => {
@@ -47,8 +43,7 @@ describe("validateLogFolder", () => {
 
   it("should reject path that is a prefix but not a child", () => {
     // "/home/user/project-other" starts with "/home/user/project" but is not a child
-    expect(() => validateLogFolder("/home/user/project-other", baseDir))
-      .toThrow("outside the allowed base directory");
+    expect(() => validateLogFolder("/home/user/project-other", baseDir)).toThrow("outside the allowed base directory");
   });
 
   it("should accept the base directory itself", () => {
@@ -62,7 +57,6 @@ describe("validateLogFolder", () => {
   });
 
   it("should reject sneaky traversal with ../ embedded", () => {
-    expect(() => validateLogFolder("Log/../../..", baseDir))
-      .toThrow("outside the allowed base directory");
+    expect(() => validateLogFolder("Log/../../..", baseDir)).toThrow("outside the allowed base directory");
   });
 });

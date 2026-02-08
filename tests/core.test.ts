@@ -116,9 +116,7 @@ describe("pickChapters", () => {
   });
 
   it("should pick single chapter", () => {
-    expect(pickChapters(testCorpus, 0, 1)).toEqual([
-      { book: "Genesis", chapter: 1 }
-    ]);
+    expect(pickChapters(testCorpus, 0, 1)).toEqual([{ book: "Genesis", chapter: 1 }]);
   });
 
   it("should pick multiple consecutive chapters", () => {
@@ -146,9 +144,7 @@ describe("pickChapters", () => {
 
   it("should handle large start index with modulo", () => {
     // Index 5 % 5 = 0 (Genesis 1)
-    expect(pickChapters(testCorpus, 5, 1)).toEqual([
-      { book: "Genesis", chapter: 1 }
-    ]);
+    expect(pickChapters(testCorpus, 5, 1)).toEqual([{ book: "Genesis", chapter: 1 }]);
   });
 
   it("should throw for empty corpus", () => {
@@ -268,8 +264,7 @@ describe("decodeHtmlEntities", () => {
   });
 
   it("should decode multiple entities in same string", () => {
-    expect(decodeHtmlEntities("&lt;p&gt;Hello&nbsp;World&lt;/p&gt;"))
-      .toBe("<p>Hello World</p>");
+    expect(decodeHtmlEntities("&lt;p&gt;Hello&nbsp;World&lt;/p&gt;")).toBe("<p>Hello World</p>");
   });
 
   it("should decode special symbols", () => {
@@ -463,13 +458,13 @@ describe("parseVersion", () => {
 describe("generateDailyReading", () => {
   it("should generate day 1 correctly", () => {
     const reading = generateDailyReading(1, "NIV", defaultConfig);
-    
+
     expect(reading.day).toBe(1);
     expect(reading.version).toBe("NIV");
     expect(reading.otRefs.length).toBe(3);
     expect(reading.gospelRefs.length).toBe(1);
     expect(reading.ntRefs.length).toBe(1);
-    
+
     expect(reading.otRefs[0]).toEqual({ book: "Genesis", chapter: 1 });
     expect(reading.gospelRefs[0]).toEqual({ book: "Matthew", chapter: 1 });
     expect(reading.ntRefs[0]).toEqual({ book: "Acts", chapter: 1 });
@@ -477,7 +472,7 @@ describe("generateDailyReading", () => {
 
   it("should generate segments correctly", () => {
     const reading = generateDailyReading(1, "NIV", defaultConfig);
-    
+
     expect(reading.segments).toContain("Genesis 1-3");
     expect(reading.segments).toContain("Matthew 1");
     expect(reading.segments).toContain("Acts 1");
@@ -485,13 +480,13 @@ describe("generateDailyReading", () => {
 
   it("should build correct search string", () => {
     const reading = generateDailyReading(1, "NIV", defaultConfig);
-    
+
     expect(reading.search).toBe("Genesis 1-3, Matthew 1, Acts 1");
   });
 
   it("should build correct URL", () => {
     const reading = generateDailyReading(1, "ESV", defaultConfig);
-    
+
     expect(reading.url).toContain("biblegateway.com");
     expect(reading.url).toContain("version=ESV");
     expect(reading.url).toContain("interface=print");
@@ -499,7 +494,7 @@ describe("generateDailyReading", () => {
 
   it("should advance chapters for subsequent days", () => {
     const day2 = generateDailyReading(2, "NIV", defaultConfig);
-    
+
     expect(day2.otRefs[0]).toEqual({ book: "Genesis", chapter: 4 });
     expect(day2.gospelRefs[0]).toEqual({ book: "Matthew", chapter: 2 });
     expect(day2.ntRefs[0]).toEqual({ book: "Acts", chapter: 2 });
@@ -511,7 +506,7 @@ describe("generateDailyReading", () => {
     // So when (N-1) * 3 % 929 = 0, we're back at Genesis 1
     // This happens at N = 929/gcd(3,929) + 1 = 929 + 1 = 930 (since gcd(3,929)=1)
     // Actually simpler: we cycle back when startIdx = 0, which is day 1, day 311 (929/3+1), etc.
-    const total = totalChapters(OT); // 929
+    const _total = totalChapters(OT); // 929 — used for documentation in comments below
     // Day where startIdx wraps back to 0: when (day-1)*3 % 929 == 0 and day > 1
     // That's day = 929/gcd(3,929) + 1, but since 929 is prime-ish, let's just test cycling works
     const reading = generateDailyReading(1000, "NIV", defaultConfig);
@@ -528,7 +523,7 @@ describe("generateDailyReading", () => {
     // Day 90 should start Matthew 1 again
     const total = totalChapters(GOSPELS);
     const daysToComplete = Math.ceil(total / defaultConfig.gospelChaptersPerDay);
-    
+
     const reading = generateDailyReading(daysToComplete + 1, "NIV", defaultConfig);
     expect(reading.gospelRefs[0]).toEqual({ book: "Matthew", chapter: 1 });
   });
@@ -557,7 +552,7 @@ describe("Integration: Full daily reading generation", () => {
   it("should generate valid reading for any day 1-365", () => {
     for (const day of [1, 50, 100, 200, 300, 365]) {
       const reading = generateDailyReading(day, "NIV", defaultConfig);
-      
+
       expect(reading.otRefs.length).toBe(defaultConfig.otChaptersPerDay);
       expect(reading.gospelRefs.length).toBe(defaultConfig.gospelChaptersPerDay);
       expect(reading.ntRefs.length).toBe(defaultConfig.ntChaptersPerDay);
@@ -570,7 +565,7 @@ describe("Integration: Full daily reading generation", () => {
     const day1 = generateDailyReading(1, "NIV", defaultConfig);
     const day2 = generateDailyReading(2, "NIV", defaultConfig);
     const day3 = generateDailyReading(3, "NIV", defaultConfig);
-    
+
     expect(day1.search).not.toBe(day2.search);
     expect(day2.search).not.toBe(day3.search);
     expect(day1.search).not.toBe(day3.search);

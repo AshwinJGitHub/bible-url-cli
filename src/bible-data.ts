@@ -46,14 +46,14 @@ export const OT: readonly Book[] = [
   { name: "Zephaniah", chapters: 3 },
   { name: "Haggai", chapters: 2 },
   { name: "Zechariah", chapters: 14 },
-  { name: "Malachi", chapters: 4 }
+  { name: "Malachi", chapters: 4 },
 ];
 
 export const GOSPELS: readonly Book[] = [
   { name: "Matthew", chapters: 28 },
   { name: "Mark", chapters: 16 },
   { name: "Luke", chapters: 24 },
-  { name: "John", chapters: 21 }
+  { name: "John", chapters: 21 },
 ];
 
 export const NT_REST: readonly Book[] = [
@@ -79,5 +79,5 @@ export const NT_REST: readonly Book[] = [
   { name: "2 John", chapters: 1 },
   { name: "3 John", chapters: 1 },
   { name: "Jude", chapters: 1 },
-  { name: "Revelation", chapters: 22 }
+  { name: "Revelation", chapters: 22 },
 ];
