@@ -1,5 +1,14 @@
 import { describe, it, expect, vi } from "vitest";
-import { main, CliError, HELP_TEXT, KNOWN_FLAGS, fetchPassageAsMarkdown, type Dependencies } from "../src/index.js";
+import {
+  main,
+  CliError,
+  HELP_TEXT,
+  KNOWN_FLAGS,
+  fetchPassageAsMarkdown,
+  readResponseWithLimit,
+  MAX_RESPONSE_SIZE,
+  type Dependencies,
+} from "../src/index.js";
 import { defaultConfig } from "../src/config.js";
 import { ValidationError } from "../src/cli-args.js";
 
@@ -94,6 +103,21 @@ describe("main — markdown mode", () => {
     expect(savedMsg).toContain("Saved to");
   });
 
+  it("should warn to stderr when parsing produces fallback (Q5)", async () => {
+    const mockFetch = vi.fn().mockResolvedValue({
+      ok: true,
+      headers: new Headers(),
+      text: () => Promise.resolve('<html><body><div class="sidebar">Nav</div></body></html>'),
+    });
+
+    const deps = mockDeps({ fetch: mockFetch });
+    await main(["1", "--markdown"], defaultConfig, deps);
+
+    expect(deps.stderr).toHaveBeenCalledTimes(1);
+    const warning = (deps.stderr as ReturnType<typeof vi.fn>).mock.calls[0]![0] as string;
+    expect(warning).toContain("Could not extract passage text");
+  });
+
   it("should create log directory if it doesn't exist", async () => {
     const mockFetch = vi.fn().mockResolvedValue({
       ok: true,
@@ -112,6 +136,8 @@ describe("main — markdown mode", () => {
 });
 
 describe("fetchPassageAsMarkdown", () => {
+  const validUrl = "https://www.biblegateway.com/passage/?search=Gen+1&version=NIV&interface=print";
+
   it("should throw CliError for non-OK response", async () => {
     const mockFetch = vi.fn().mockResolvedValue({
       ok: false,
@@ -120,8 +146,7 @@ describe("fetchPassageAsMarkdown", () => {
       headers: new Headers(),
     });
 
-    await expect(fetchPassageAsMarkdown("http://example.com", mockFetch))
-      .rejects.toThrow(CliError);
+    await expect(fetchPassageAsMarkdown(validUrl, mockFetch)).rejects.toThrow(CliError);
   });
 
   it("should throw CliError for oversized content-length", async () => {
@@ -131,8 +156,7 @@ describe("fetchPassageAsMarkdown", () => {
       text: () => Promise.resolve(""),
     });
 
-    await expect(fetchPassageAsMarkdown("http://example.com", mockFetch))
-      .rejects.toThrow("too large");
+    await expect(fetchPassageAsMarkdown(validUrl, mockFetch)).rejects.toThrow("too large");
   });
 
   it("should return parsed markdown for valid response", async () => {
@@ -142,9 +166,23 @@ describe("fetchPassageAsMarkdown", () => {
       text: () => Promise.resolve('<div class="passage-text"><sup class="versenum">1</sup>In the beginning</div>'),
     });
 
-    const result = await fetchPassageAsMarkdown("http://example.com", mockFetch);
+    const result = await fetchPassageAsMarkdown(validUrl, mockFetch);
     expect(result).toContain("<sup>1</sup>");
     expect(result).toContain("In the beginning");
+  });
+
+  it("should reject non-HTTPS URLs (S2 — SSRF)", async () => {
+    const mockFetch = vi.fn();
+    await expect(fetchPassageAsMarkdown("http://example.com", mockFetch)).rejects.toThrow("must use HTTPS");
+    expect(mockFetch).not.toHaveBeenCalled();
+  });
+
+  it("should reject non-BibleGateway URLs (S2 — SSRF)", async () => {
+    const mockFetch = vi.fn();
+    await expect(fetchPassageAsMarkdown("https://169.254.169.254/metadata", mockFetch)).rejects.toThrow(
+      "not in the allowed list",
+    );
+    expect(mockFetch).not.toHaveBeenCalled();
   });
 });
 
@@ -159,8 +197,7 @@ describe("main — path traversal prevention (S1)", () => {
     const evilConfig = { ...defaultConfig, logFolder: "../../../etc/cron.d" };
     const deps = mockDeps({ fetch: mockFetch });
 
-    await expect(main(["1", "--markdown"], evilConfig, deps))
-      .rejects.toThrow("outside the allowed base directory");
+    await expect(main(["1", "--markdown"], evilConfig, deps)).rejects.toThrow("outside the allowed base directory");
   });
 
   it("should reject absolute path outside cwd", async () => {
@@ -173,8 +210,80 @@ describe("main — path traversal prevention (S1)", () => {
     const evilConfig = { ...defaultConfig, logFolder: "/tmp/evil" };
     const deps = mockDeps({ fetch: mockFetch });
 
-    await expect(main(["1", "--markdown"], evilConfig, deps))
-      .rejects.toThrow("outside the allowed base directory");
+    await expect(main(["1", "--markdown"], evilConfig, deps)).rejects.toThrow("outside the allowed base directory");
+  });
+});
+
+describe("readResponseWithLimit (S6 — streaming size check)", () => {
+  function makeStreamResponse(chunks: Uint8Array[]): Response {
+    let index = 0;
+    const stream = new ReadableStream<Uint8Array>({
+      pull(controller) {
+        if (index < chunks.length) {
+          controller.enqueue(chunks[index]);
+          index++;
+        } else {
+          controller.close();
+        }
+      },
+    });
+    return new Response(stream);
+  }
+
+  it("should read a normal-sized response successfully", async () => {
+    const content = "Hello, World!";
+    const chunks = [new TextEncoder().encode(content)];
+    const response = makeStreamResponse(chunks);
+
+    const result = await readResponseWithLimit(response, MAX_RESPONSE_SIZE);
+    expect(result).toBe(content);
+  });
+
+  it("should abort when stream exceeds limit", async () => {
+    // Create chunks that total > limit
+    const limit = 100;
+    const bigChunk = new Uint8Array(limit + 1).fill(65); // 'A' repeated
+    const response = makeStreamResponse([bigChunk]);
+
+    await expect(readResponseWithLimit(response, limit)).rejects.toThrow("exceeded");
+  });
+
+  it("should abort mid-stream across multiple chunks", async () => {
+    const limit = 100;
+    const chunk1 = new Uint8Array(60).fill(65);
+    const chunk2 = new Uint8Array(60).fill(66); // Together 120 > 100
+    const response = makeStreamResponse([chunk1, chunk2]);
+
+    await expect(readResponseWithLimit(response, limit)).rejects.toThrow(CliError);
+  });
+
+  it("should accept response exactly at limit", async () => {
+    const limit = 100;
+    const chunk = new Uint8Array(limit).fill(65);
+    const response = makeStreamResponse([chunk]);
+
+    const result = await readResponseWithLimit(response, limit);
+    expect(result.length).toBe(limit);
+  });
+
+  it("should fall back to .text() when body is null", async () => {
+    // Simulate a response with no body stream (e.g., test mocks)
+    const mockResponse = {
+      body: null,
+      text: () => Promise.resolve("small content"),
+    } as unknown as Response;
+
+    const result = await readResponseWithLimit(mockResponse, MAX_RESPONSE_SIZE);
+    expect(result).toBe("small content");
+  });
+
+  it("should throw via fallback when .text() exceeds limit", async () => {
+    const mockResponse = {
+      body: null,
+      text: () => Promise.resolve("x".repeat(200)),
+    } as unknown as Response;
+
+    await expect(readResponseWithLimit(mockResponse, 100)).rejects.toThrow("too large");
   });
 });
 

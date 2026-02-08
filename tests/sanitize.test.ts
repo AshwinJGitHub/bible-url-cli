@@ -72,6 +72,7 @@ describe("sanitizeForTerminal", () => {
   it("should handle URL with multiple injection attempts", () => {
     const malicious = "\x1b[31mhttps://evil\x07.com\x1b\\";
     const sanitized = sanitizeForTerminal(malicious);
+    // eslint-disable-next-line no-control-regex -- intentionally testing control char presence
     expect(sanitized).not.toMatch(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/);
   });
 });

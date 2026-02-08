@@ -1,9 +1,5 @@
 import { describe, it, expect } from "vitest";
-import {
-  processPassageHtml,
-  parseHtmlToMarkdown,
-  extractFootnotes,
-} from "../src/html-parser.js";
+import { processPassageHtml, parseHtmlToMarkdown, extractFootnotes } from "../src/html-parser.js";
 
 describe("ReDoS resistance (S3)", () => {
   it("should handle deeply nested div structure without catastrophic backtracking", () => {
@@ -31,9 +27,8 @@ describe("ReDoS resistance (S3)", () => {
 
   it("should handle pathological footnote sup pattern", () => {
     // Create input designed to trigger backtracking on the footnote sup regex
-    const malicious = '<sup data-fn="#fn1" class="footnote">' +
-      '<a href="#fn">'.repeat(50) + 'a' + '</a>'.repeat(50) +
-      '</sup>';
+    const malicious =
+      '<sup data-fn="#fn1" class="footnote">' + '<a href="#fn">'.repeat(50) + "a" + "</a>".repeat(50) + "</sup>";
 
     const start = performance.now();
     processPassageHtml(malicious);
@@ -43,9 +38,8 @@ describe("ReDoS resistance (S3)", () => {
   });
 
   it("should handle pathological cross-reference patterns", () => {
-    const malicious = '<sup class="crossreference crossref">' +
-      '<a>'.repeat(100) + 'text' + '</a>'.repeat(100) +
-      '</sup>';
+    const malicious =
+      '<sup class="crossreference crossref">' + "<a>".repeat(100) + "text" + "</a>".repeat(100) + "</sup>";
 
     const start = performance.now();
     processPassageHtml(malicious);
@@ -56,8 +50,8 @@ describe("ReDoS resistance (S3)", () => {
 
   it("should handle pathological footnotes extraction", () => {
     // Create input that could cause backtracking in the footnotes regex
-    const malicious = '<div class="footnotes">' +
-      '<div class="something">'.repeat(100) + 'content' + '</div>'.repeat(100);
+    const malicious =
+      '<div class="footnotes">' + '<div class="something">'.repeat(100) + "content" + "</div>".repeat(100);
 
     const start = performance.now();
     extractFootnotes(malicious);
@@ -75,7 +69,7 @@ describe("ReDoS resistance (S3)", () => {
         html += `<h3 class="heading">Section ${i / 10}</h3>`;
       }
     }
-    html += '</div></div>';
+    html += "</div></div>";
 
     const start = performance.now();
     const result = parseHtmlToMarkdown(html);
