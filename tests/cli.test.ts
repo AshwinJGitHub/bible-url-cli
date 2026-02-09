@@ -2,6 +2,7 @@ import { describe, it, expect, vi } from "vitest";
 import {
   main,
   CliError,
+  EXIT_CODES,
   HELP_TEXT,
   KNOWN_FLAGS,
   fetchPassageAsMarkdown,
@@ -15,9 +16,9 @@ import { ValidationError } from "../src/cli-args.js";
 function mockDeps(overrides: Partial<Dependencies> = {}): Dependencies {
   return {
     fetch: vi.fn(),
-    writeFile: vi.fn(),
-    mkdirSync: vi.fn(),
-    existsSync: vi.fn().mockReturnValue(true),
+    writeFile: vi.fn().mockResolvedValue(undefined),
+    mkdir: vi.fn().mockResolvedValue(undefined),
+    stat: vi.fn().mockResolvedValue({ isDirectory: () => true }),
     stdout: vi.fn(),
     stderr: vi.fn(),
     ...overrides,
@@ -118,7 +119,7 @@ describe("main — markdown mode", () => {
     expect(warning).toContain("Could not extract passage text");
   });
 
-  it("should create log directory if it doesn't exist", async () => {
+  it("should create log directory if it doesn't exist (Q7 — async)", async () => {
     const mockFetch = vi.fn().mockResolvedValue({
       ok: true,
       headers: new Headers(),
@@ -127,11 +128,23 @@ describe("main — markdown mode", () => {
 
     const deps = mockDeps({
       fetch: mockFetch,
-      existsSync: vi.fn().mockReturnValue(false),
+      stat: vi.fn().mockRejectedValue(new Error("ENOENT")),
     });
 
     await main(["1", "-m"], defaultConfig, deps);
-    expect(deps.mkdirSync).toHaveBeenCalledTimes(1);
+    expect(deps.mkdir).toHaveBeenCalledTimes(1);
+  });
+
+  it("should not create directory if it already exists (Q7 — async)", async () => {
+    const mockFetch = vi.fn().mockResolvedValue({
+      ok: true,
+      headers: new Headers(),
+      text: () => Promise.resolve('<div class="passage-text">text</div>'),
+    });
+
+    const deps = mockDeps({ fetch: mockFetch });
+    await main(["1", "-m"], defaultConfig, deps);
+    expect(deps.mkdir).not.toHaveBeenCalled();
   });
 });
 
@@ -294,5 +307,59 @@ describe("KNOWN_FLAGS", () => {
     expect(KNOWN_FLAGS).toContain("-m");
     expect(KNOWN_FLAGS).toContain("--help");
     expect(KNOWN_FLAGS).toContain("-h");
+  });
+});
+
+describe("EXIT_CODES (Q14 — structured exit codes)", () => {
+  it("should define distinct exit codes", () => {
+    expect(EXIT_CODES.VALIDATION).toBe(1);
+    expect(EXIT_CODES.NETWORK).toBe(2);
+    expect(EXIT_CODES.FILE_IO).toBe(3);
+  });
+
+  it("should use VALIDATION exit code for unknown flag errors", async () => {
+    const deps = mockDeps();
+    try {
+      await main(["--bad-flag"], defaultConfig, deps);
+    } catch (err) {
+      expect(err).toBeInstanceOf(CliError);
+      expect((err as CliError).exitCode).toBe(EXIT_CODES.VALIDATION);
+    }
+  });
+
+  it("should use NETWORK exit code for fetch failures", async () => {
+    const validUrl = "https://www.biblegateway.com/passage/?search=Gen+1&version=NIV&interface=print";
+    const mockFetch = vi.fn().mockResolvedValue({
+      ok: false,
+      status: 500,
+      statusText: "Internal Server Error",
+      headers: new Headers(),
+    });
+
+    try {
+      await fetchPassageAsMarkdown(validUrl, mockFetch);
+    } catch (err) {
+      expect(err).toBeInstanceOf(CliError);
+      expect((err as CliError).exitCode).toBe(EXIT_CODES.NETWORK);
+    }
+  });
+
+  it("should use NETWORK exit code for oversized responses", async () => {
+    const mockResponse = {
+      body: null,
+      text: () => Promise.resolve("x".repeat(200)),
+    } as unknown as Response;
+
+    try {
+      await readResponseWithLimit(mockResponse, 100);
+    } catch (err) {
+      expect(err).toBeInstanceOf(CliError);
+      expect((err as CliError).exitCode).toBe(EXIT_CODES.NETWORK);
+    }
+  });
+
+  it("should default CliError to VALIDATION exit code", () => {
+    const err = new CliError("test");
+    expect(err.exitCode).toBe(EXIT_CODES.VALIDATION);
   });
 });

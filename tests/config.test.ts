@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { defaultConfig, mergeConfig, validateConfig } from "../src/config.js";
+import * as configModule from "../src/config.js";
 
 describe("validateConfig (Q10)", () => {
   it("should accept default config", () => {
@@ -93,5 +94,11 @@ describe("mergeConfig (Q12 — composable merge)", () => {
 
   it("should reject invalid bibleGatewayBaseUrl", () => {
     expect(() => mergeConfig({ bibleGatewayBaseUrl: "not-a-url" })).toThrow("Invalid bibleGatewayBaseUrl");
+  });
+});
+
+describe("Q11 — fetchConfig removal", () => {
+  it("should not export fetchConfig (dead code removed)", () => {
+    expect("fetchConfig" in configModule).toBe(false);
   });
 });

@@ -153,11 +153,15 @@ describe("processFootnotesHtml (direct import)", () => {
     expect(processFootnotesHtml("")).toBeNull();
   });
 
-  it("should extract footnote with correct ID", () => {
+  it("should extract footnote with letter and content (Q6 — pure markdown)", () => {
     const html = '<li id="fen-NIV-26a">Genesis 1:26 Some footnote text</li>';
     const result = processFootnotesHtml(html);
     expect(result).not.toBeNull();
-    expect(result).toContain('id="fen-NIV-26a"');
+    expect(result).toContain("**a.**");
+    expect(result).toContain("Genesis 1:26 Some footnote text");
+    // Q6: Should NOT contain raw HTML
+    expect(result).not.toContain("<p ");
+    expect(result).not.toContain("<sup>");
   });
 });
 

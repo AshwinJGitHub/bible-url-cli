@@ -351,12 +351,15 @@ describe("processFootnotesHtml", () => {
     expect(processFootnotesHtml("<div>no footnotes here</div>")).toBeNull();
   });
 
-  it("should extract footnote with correct ID", () => {
+  it("should extract footnote with letter and content (Q6 — pure markdown)", () => {
     const html = '<li id="fen-NIV-26a">Genesis 1:26 Some footnote text</li>';
     const result = processFootnotesHtml(html);
     expect(result).not.toBeNull();
-    expect(result).toContain('id="fen-NIV-26a"');
-    expect(result).toContain("<sup>a</sup>");
+    expect(result).toContain("**a.**");
+    expect(result).toContain("Genesis 1:26 Some footnote text");
+    // Q6: no raw HTML in output
+    expect(result).not.toContain("<p ");
+    expect(result).not.toContain("<sup>");
   });
 
   it("should extract multiple footnotes", () => {
@@ -365,8 +368,10 @@ describe("processFootnotesHtml", () => {
       <li id="fen-NIV-36b">Genesis 2:5 Second footnote</li>
     `;
     const result = processFootnotesHtml(html);
-    expect(result).toContain('id="fen-NIV-26a"');
-    expect(result).toContain('id="fen-NIV-36b"');
+    expect(result).toContain("**a.**");
+    expect(result).toContain("**b.**");
+    expect(result).toContain("First footnote");
+    expect(result).toContain("Second footnote");
   });
 
   it("should ignore cross-references (cen-)", () => {
@@ -375,7 +380,7 @@ describe("processFootnotesHtml", () => {
       <li id="cen-NIV-26A">Cross-reference</li>
     `;
     const result = processFootnotesHtml(html);
-    expect(result).toContain("fen-NIV-26a");
+    expect(result).toContain("**a.**");
     expect(result).not.toContain("cen-NIV-26A");
   });
 

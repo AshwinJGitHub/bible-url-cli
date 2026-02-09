@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import * as fs from "node:fs";
+import * as fsp from "node:fs/promises";
 import * as path from "node:path";
 import { defaultConfig, type ReadingPlanConfig } from "./config.js";
 import {
@@ -15,10 +15,20 @@ import { validateLogFolder } from "./path-validation.js";
 import { sanitizeForTerminal } from "./sanitize.js";
 import { validateUrl } from "./url-validation.js";
 
+/** Structured exit codes for scripting contexts (Q14) */
+export const EXIT_CODES = {
+  /** Input validation failure (bad args, invalid config) */
+  VALIDATION: 1,
+  /** Network-related failure (fetch error, timeout, SSRF rejection) */
+  NETWORK: 2,
+  /** File I/O failure (write error, path traversal blocked) */
+  FILE_IO: 3,
+} as const;
+
 export class CliError extends Error {
   constructor(
     message: string,
-    public readonly exitCode: number = 1,
+    public readonly exitCode: number = EXIT_CODES.VALIDATION,
   ) {
     super(message);
     this.name = "CliError";
@@ -62,18 +72,18 @@ export const REQUEST_TIMEOUT_MS = 30_000;
 
 export interface Dependencies {
   fetch: typeof globalThis.fetch;
-  writeFile: (filePath: string, content: string) => void;
-  mkdirSync: (dirPath: string, options?: { recursive?: boolean }) => void;
-  existsSync: (dirPath: string) => boolean;
+  writeFile: (filePath: string, content: string) => Promise<void>;
+  mkdir: (dirPath: string, options?: { recursive?: boolean }) => Promise<void>;
+  stat: (dirPath: string) => Promise<{ isDirectory: () => boolean }>;
   stdout: (message: string) => void;
   stderr: (message: string) => void;
 }
 
 const defaultDeps: Dependencies = {
   fetch: globalThis.fetch,
-  writeFile: (filePath, content) => fs.writeFileSync(filePath, content, "utf-8"),
-  mkdirSync: (dirPath, options) => fs.mkdirSync(dirPath, options),
-  existsSync: (dirPath) => fs.existsSync(dirPath),
+  writeFile: (filePath, content) => fsp.writeFile(filePath, content, "utf-8"),
+  mkdir: (dirPath, options) => fsp.mkdir(dirPath, options).then(() => undefined),
+  stat: (dirPath) => fsp.stat(dirPath),
   stdout: (msg) => console.log(msg),
   stderr: (msg) => console.error(msg),
 };
@@ -90,7 +100,7 @@ export async function readResponseWithLimit(response: Response, maxBytes: number
   if (!response.body) {
     const text = await response.text();
     if (text.length > maxBytes) {
-      throw new CliError(`Response too large: ${text.length} bytes (max: ${maxBytes})`);
+      throw new CliError(`Response too large: ${text.length} bytes (max: ${maxBytes})`, EXIT_CODES.NETWORK);
     }
     return text;
   }
@@ -108,7 +118,10 @@ export async function readResponseWithLimit(response: Response, maxBytes: number
       totalBytes += value.byteLength;
       if (totalBytes > maxBytes) {
         void reader.cancel();
-        throw new CliError(`Response too large: exceeded ${maxBytes} bytes during download (max: ${maxBytes})`);
+        throw new CliError(
+          `Response too large: exceeded ${maxBytes} bytes during download (max: ${maxBytes})`,
+          EXIT_CODES.NETWORK,
+        );
       }
 
       chunks.push(decoder.decode(value, { stream: true }));
@@ -134,13 +147,13 @@ export async function fetchPassageAsMarkdown(url: string, fetchFn: typeof global
   try {
     const response = await fetchFn(url, { signal: controller.signal });
     if (!response.ok) {
-      throw new CliError(`Failed to fetch passage: ${response.status} ${response.statusText}`);
+      throw new CliError(`Failed to fetch passage: ${response.status} ${response.statusText}`, EXIT_CODES.NETWORK);
     }
 
     // Check content-length header if available (early reject)
     const contentLength = response.headers.get("content-length");
     if (contentLength && parseInt(contentLength, 10) > MAX_RESPONSE_SIZE) {
-      throw new CliError(`Response too large: ${contentLength} bytes (max: ${MAX_RESPONSE_SIZE})`);
+      throw new CliError(`Response too large: ${contentLength} bytes (max: ${MAX_RESPONSE_SIZE})`, EXIT_CODES.NETWORK);
     }
 
     // Stream the body and enforce size limit during download (S6)
@@ -150,7 +163,7 @@ export async function fetchPassageAsMarkdown(url: string, fetchFn: typeof global
   } catch (err) {
     if (err instanceof CliError) throw err;
     if (err instanceof Error && err.name === "AbortError") {
-      throw new CliError(`Request timed out after ${REQUEST_TIMEOUT_MS / 1000} seconds`);
+      throw new CliError(`Request timed out after ${REQUEST_TIMEOUT_MS / 1000} seconds`, EXIT_CODES.NETWORK);
     }
     throw err;
   } finally {
@@ -193,15 +206,18 @@ export async function main(
 
     const logDir = validateLogFolder(config.logFolder);
 
-    if (!deps.existsSync(logDir)) {
-      deps.mkdirSync(logDir, { recursive: true });
+    // Q7: Use async fs operations to avoid blocking the event loop
+    try {
+      await deps.stat(logDir);
+    } catch {
+      await deps.mkdir(logDir, { recursive: true });
     }
 
     const date = new Date().toISOString().split("T")[0];
     const filename = `${date}-day-${day}.md`;
     const filePath = path.join(logDir, filename);
 
-    deps.writeFile(filePath, markdown);
+    await deps.writeFile(filePath, markdown);
     deps.stdout(`Saved to ${filePath}`);
   } else {
     // Use OSC 8 hyperlink escape sequence for clickable terminal links
