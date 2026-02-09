@@ -311,7 +311,8 @@ export function processFootnotesHtml(html: string): string | null {
     content = content.replace(resetRegex(RE_STRIP_ALL_TAGS), "");
     content = decodeHtmlEntities(content).trim();
 
-    lines.push(`<p id="${fullId}"><sup>${letter}</sup> ${content}</p>`);
+    // Q6: Use pure markdown instead of raw HTML in footnote output
+    lines.push(`**${letter}.** ${content}`);
   }
 
   if (lines.length <= 4) return null;

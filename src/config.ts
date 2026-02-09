@@ -32,20 +32,6 @@ export const defaultConfig: ReadingPlanConfig = {
 };
 
 /**
- * Placeholder for future web service integration.
- * @example
- * ```ts
- * const config = await fetchConfig("https://api.example.com/reading-plan/config");
- * ```
- */
-// eslint-disable-next-line @typescript-eslint/require-await -- placeholder for future async web service fetch (Q11)
-export async function fetchConfig(_serviceUrl: string): Promise<ReadingPlanConfig> {
-  // TODO: Implement web service fetch
-  // For now, return the default config
-  return defaultConfig;
-}
-
-/**
  * Validate a ReadingPlanConfig for correctness (Q10).
  * Chapter counts must be positive integers. Base URL must be HTTPS.
  * Version and logFolder must be non-empty strings.

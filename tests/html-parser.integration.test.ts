@@ -66,9 +66,12 @@ describe("parseHtmlToMarkdown — Genesis 1 NIV fixture", () => {
     expect(result).toContain("\u2014"); // em dash
   });
 
-  it("should contain footnote section", () => {
+  it("should contain footnote section (Q6 — pure markdown)", () => {
     expect(result).toContain("Footnotes");
-    expect(result).toContain("fen-NIV-26a");
+    // Q6: footnotes use bold letter format, not raw HTML
+    expect(result).toContain("**a.**");
+    // Should NOT contain raw HTML footnote wrappers
+    expect(result).not.toMatch(/<p id="/);
   });
 
   it("should not contain raw HTML tags (except sup and a)", () => {
@@ -76,6 +79,7 @@ describe("parseHtmlToMarkdown — Genesis 1 NIV fixture", () => {
     expect(result).not.toMatch(/<div[^>]*>/);
     expect(result).not.toMatch(/<span[^>]*>/);
     expect(result).not.toMatch(/<p class=/);
+    expect(result).not.toMatch(/<p id=/);
   });
 
   it("should not contain cross-reference markers", () => {
@@ -123,10 +127,12 @@ describe("parseHtmlToMarkdown — Psalm 23 ESV fixture (poetry + footnotes)", ()
     expect(result).not.toMatch(/\(A\)/);
   });
 
-  it("should contain multiple footnotes", () => {
-    expect(result).toContain("fen-ESV-14239a");
-    expect(result).toContain("fen-ESV-14240b");
-    expect(result).toContain("fen-ESV-14242c");
+  it("should contain multiple footnotes (Q6 — pure markdown)", () => {
+    // Q6: footnotes use bold letter format, not raw HTML with IDs
+    expect(result).toContain("**a.**");
+    expect(result).toContain("**b.**");
+    expect(result).toContain("**c.**");
+    expect(result).not.toMatch(/<p id="/);
   });
 
   it("should not contain raw crossrefs section HTML", () => {
@@ -166,8 +172,11 @@ describe("parseHtmlToMarkdown — multi-passage fixture (column splitting)", () 
     expect(result).toContain("Genealogy");
   });
 
-  it("should contain footnotes from Matthew passage", () => {
-    expect(result).toContain("fen-NIV-23145a");
+  it("should contain footnotes from Matthew passage (Q6 — pure markdown)", () => {
+    // Q6: footnotes use bold letter format
+    expect(result).toContain("**a.**");
+    expect(result).toContain("Footnotes");
+    expect(result).not.toMatch(/<p id="/);
   });
 
   it("should show version only once", () => {
